@@ -1220,7 +1220,7 @@ function updateFpvFlight(dt) {
     (keys.has('Space') ? 1 : 0) - (keys.has('ShiftLeft') || keys.has('ShiftRight') ? 1 : 0) - sticks.move.y, -1, 1);
   throttle = THREE.MathUtils.clamp(throttle + thrustInput * dt * 0.42, 0, 1);
   fpvThrottle.textContent = `${Math.round(throttle * 100)}%`;
-  fpvYaw += yawInput * dt * 1.8;
+  fpvYaw -= yawInput * dt * 1.8;
   const blend = 1 - Math.exp(-dt * 5);
   fpvPitch = THREE.MathUtils.lerp(fpvPitch, -pitchInput * 0.55, blend);
   fpvRoll = THREE.MathUtils.lerp(fpvRoll, -rollInput * 0.55, blend);
@@ -1437,7 +1437,7 @@ function drawMap() {
   const y = (drone.position.z + WORLD) * scale;
   mapCtx.save();
   mapCtx.translate(x, y);
-  mapCtx.rotate(mission === 3 ? fpvYaw : yaw);
+  mapCtx.rotate(-(mission === 3 ? fpvYaw : yaw));
   mapCtx.fillStyle = '#1f5bff';
   mapCtx.strokeStyle = '#fff';
   mapCtx.lineWidth = 1.5;
@@ -1478,7 +1478,7 @@ function frame() {
     const strafe = THREE.MathUtils.clamp((keys.has('KeyD') ? 1 : 0) - (keys.has('KeyA') ? 1 : 0) + sticks.move.x, -1, 1);
     const turn = THREE.MathUtils.clamp((keys.has('KeyE') || keys.has('ArrowRight') ? 1 : 0) - (keys.has('KeyQ') || keys.has('ArrowLeft') ? 1 : 0) + sticks.look.x, -1, 1);
     const rise = THREE.MathUtils.clamp((keys.has('Space') ? 1 : 0) - (keys.has('ShiftLeft') || keys.has('ShiftRight') ? 1 : 0) - sticks.look.y, -1, 1);
-    yaw += turn * dt * 1.55;
+    yaw -= turn * dt * 1.55;
     const direction = new THREE.Vector3(strafe, 0, -forward);
     if (direction.lengthSq() > 1) direction.normalize();
     direction.applyAxisAngle(THREE.Object3D.DEFAULT_UP, yaw);
@@ -1536,7 +1536,7 @@ function frame() {
   document.querySelector('#distance').textContent = Math.round(distanceTravelled);
   document.querySelector('#coordinates').textContent = `${Math.round(drone.position.x)}, ${Math.round(drone.position.z)}`;
   const points = ['С', 'СВ', 'В', 'ЮВ', 'Ю', 'ЮЗ', 'З', 'СЗ'];
-  document.querySelector('#heading').textContent = points[((Math.round(yaw / (Math.PI / 4)) % 8) + 8) % 8];
+  document.querySelector('#heading').textContent = points[((Math.round(-yaw / (Math.PI / 4)) % 8) + 8) % 8];
   drawMap();
   renderer.render(scene, camera);
 }

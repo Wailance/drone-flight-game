@@ -32,7 +32,8 @@
 .fpv-rec i { display: inline-block; width: 7px; height: 7px; margin-right: 5px; border-radius: 50%; background: #7f8b94; }
 .fpv-readout.recording .fpv-rec { color: #fff; }
 .fpv-readout.recording .fpv-rec i { background: #ff5e53; box-shadow: 0 0 8px #ff5e53; }
-#app.fpv .reticle { top: 50%; width: 42px; height: 42px; border-color: #fff; }
+.reticle { display: none; }
+#app.fpv .reticle { display: block; top: 50%; width: 42px; height: 42px; border-color: #fff; }
 #app.fpv .reticle:before { left: 20px; top: -12px; height: 64px; }
 #app.fpv .reticle:after { top: 20px; left: -12px; width: 64px; }
 #app.fpv .reticle span { inset: 19px; background: #fff; }
