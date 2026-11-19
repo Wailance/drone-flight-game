@@ -102,7 +102,13 @@
   .field-progress { height: 5px; margin-top: 5px; }
   .scan-status { font-size: 7px; margin-top: 2px; padding-top: 6px; }
   .scan-status #scan-range { display: none; }
-  .scan-button { bottom: max(186px, calc(env(safe-area-inset-bottom) + 153px)); min-width: 172px; height: 41px; font-size: 9px; gap: 6px; padding: 0 10px; }
+  .scan-button { bottom: max(80px, calc(env(safe-area-inset-bottom) + 80px)); width: 76px; min-width: 0; height: 56px; flex-direction: column; gap: 0; padding: 2px; }
+  .scan-button::after { content: 'ЛИДАР'; font-size: 9px; }
+  #app.agriculture .scan-button::after { content: 'ПОЛИВ'; }
+  #app.fpv .scan-button::after { content: 'ЗАПИСЬ'; }
+  #app.scanning .scan-button::after { content: 'СТОП'; }
+  .scan-button .scan-symbol { line-height: 1; }
+  .scan-button #scan-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .scan-button kbd { display: none; }
 }
 @media (max-width: 360px) {
@@ -112,12 +118,11 @@
   .wall-progress { gap: 2px; }
   .wall-meter { gap: 1px; font-size: 6px; }
   .wall-meter b { width: 9px; }
-  .scan-button { bottom: 153px; }
 }
 @media (max-width: 700px) {
   #app.fpv .fpv-readout { top: 255px; left: 12px; transform: none; }
 }
 @media (max-height: 550px) and (pointer: coarse) {
   .mission-panel { top: 66px; right: 140px; }
-  .scan-button { left: 50%; bottom: 12px; min-width: 148px; }
+  .scan-button { bottom: 8px; }
 }
