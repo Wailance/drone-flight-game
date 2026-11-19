@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&display=swap');
+
+:root {
+  --brand-blue: #1f5bff;
+  --brand-navy: #233d57;
+  --brand-ink: #303747;
+  --brand-muted: #717171;
+  --brand-line: #dfe1e6;
+  --brand-soft: #a9c4ff;
+  color: #fff;
+  background: var(--brand-navy);
+}
+.vignette { background: linear-gradient(180deg, rgba(21,40,60,.27), transparent 24%, transparent 73%, rgba(21,40,60,.31)); }
+.topbar { background: rgba(35,61,87,.97); border-bottom: 1px solid rgba(255,255,255,.16); }
+.brand img { display: block; width: 80px; height: 66px; object-fit: contain; flex: none; }
+.brand strong { font-size: 21px; color: #fff; }
+.brand small { color: var(--brand-soft); }
+.mode-label { color: #fff; }
+.live-dot { background: #b9caff; box-shadow: 0 0 8px rgba(169,196,255,.7); }
+.icon-button { color: #fff; background: transparent; border-color: rgba(255,255,255,.42); border-radius: 3px; }
+.icon-button:hover { background: var(--brand-blue); border-color: var(--brand-blue); }
+.flight-status { color: #fff; background: var(--brand-blue); border-color: var(--brand-blue); backdrop-filter: none; }
+.flight-status .live-dot { background: #fff; box-shadow: none; }
+.telemetry, .map-panel { color: var(--brand-ink); background: rgba(255,255,255,.96); border: 1px solid var(--brand-line); backdrop-filter: blur(10px); }
+.telemetry-item { border-color: var(--brand-line); }
+.telemetry-item>span { color: var(--brand-muted); }
+.telemetry-item strong { color: var(--brand-navy); font: 500 25px 'Oswald', 'Manrope', sans-serif; }
+.telemetry-item em { color: var(--brand-blue); font-family: 'Manrope', sans-serif; font-weight: 800; }
+.compass { color: var(--brand-blue); background: #fff; border: 2px solid var(--brand-blue); font-family: 'Manrope', sans-serif; font-weight: 800; }
+.compass i { background: var(--brand-blue); }
+.reticle { border-color: rgba(255,255,255,.9); filter: drop-shadow(0 1px 2px rgba(20,37,57,.55)); }
+.reticle:before, .reticle:after { background: rgba(255,255,255,.9); }
+.reticle span { background: var(--brand-blue); }
+.panel-title { color: var(--brand-ink); }
+.map-coordinates, .map-scale { color: var(--brand-muted); }
+#minimap { background: #d9e4ea; }
+.map-caption { color: var(--brand-blue); }
+.map-pin { background: var(--brand-blue); }
+.help-panel { background: rgba(28,51,75,.94); border-color: rgba(255,255,255,.23); }
+.help-title { color: var(--brand-soft); }
+.help-title button { color: #fff; }
+.help-row { color: rgba(255,255,255,.72); }
+kbd { color: #fff; border-color: rgba(255,255,255,.35); background: rgba(255,255,255,.08); }
+.toast { color: var(--brand-ink); background: #fff; border-color: var(--brand-blue); }
+.bottom-line { color: rgba(255,255,255,.8); background: rgba(28,51,75,.95); border-color: rgba(255,255,255,.2); }
+.bottom-line b { color: var(--brand-soft); }
+@media (pointer: coarse), (max-width: 700px) {
+  .brand img { width: 47px; height: 44px; }
+  .brand strong { font-size: 16px; }
+  .telemetry-item strong { font-size: 19px; }
+  .stick { border-color: rgba(255,255,255,.85); background: rgba(35,61,87,.54); }
+  .stick:after { background: #fff; }
+  .stick-knob { border-color: #fff; background: rgba(31,91,255,.58); box-shadow: 0 0 0 2px rgba(31,91,255,.45); }
+  .stick-group>span { color: #fff; text-shadow: 0 1px 5px #233d57; }
+}

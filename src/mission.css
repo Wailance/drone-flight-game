@@ -1,0 +1,122 @@
+.mission-panel { --scan-blue: #4188e8; position: absolute; top: 110px; right: 32px; width: 232px; color: var(--brand-ink); background: rgba(255,255,255,.97); border: 1px solid var(--brand-line); padding: 14px; }
+.mission-heading, .mission-row, .scan-status { display: flex; align-items: center; justify-content: space-between; }
+.mission-heading { gap: 8px; padding-bottom: 12px; border-bottom: 1px solid var(--brand-line); font: 800 10px 'Manrope',sans-serif; color: var(--brand-blue); }
+.mission-heading strong { font: 500 20px 'Oswald',sans-serif; white-space: nowrap; }
+.mission-list { display: grid; }
+.mission-row { display: block; min-height: 66px; padding: 10px 0; border-bottom: 1px solid var(--brand-line); font-size: 11px; font-weight: 700; }
+.mission-row[hidden] { display: none; }
+.mission-row:last-child { border: 0; }
+.mission-building { width: 100%; }
+.mission-row-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.mission-row .mission-name { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.mission-row .mission-name i { width: 8px; height: 8px; flex: none; background: #b3bdc6; }
+.mission-row.active .mission-name i { background: var(--scan-blue); }
+.mission-row.complete .mission-name i { background: #376fc2; }
+.mission-row .percent { color: var(--brand-muted); font: 500 16px 'Oswald',sans-serif; white-space: nowrap; }
+.mission-row.complete .percent { color: #376fc2; }
+.wall-progress { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 5px; margin-top: 8px; }
+.wall-meter { display: flex; align-items: center; gap: 3px; min-width: 0; color: var(--brand-muted); font: 700 9px 'Manrope',sans-serif; }
+.wall-meter b { flex: none; width: 12px; }
+.wall-meter i { flex: 1; display: block; height: 5px; min-width: 0; background: #e0e6eb; overflow: hidden; }
+.wall-meter i span { display: block; width: 0; height: 100%; background: var(--scan-blue); transition: width .25s ease; }
+.wall-meter.complete i span { background: #376fc2; }
+.field-progress { margin-top: 9px; height: 6px; background: #e0e6eb; overflow: hidden; }
+.field-progress span { display: block; width: 0; height: 100%; background: #468fc1; transition: width .25s ease; }
+.mission-row.complete .field-progress span { background: #367eaf; }
+.target-indicator[hidden] { display: none; }
+.target-indicator { position: absolute; z-index: 2; width: 44px; height: 44px; transform: translate(-50%, -50%); pointer-events: none; filter: drop-shadow(0 2px 6px rgba(18,49,81,.6)); }
+.fpv-readout[hidden] { display: none; }
+.fpv-readout { position: absolute; z-index: 2; top: 110px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; align-items: center; padding: 8px 12px; background: rgba(22,37,48,.82); color: #fff; border: 1px solid rgba(255,255,255,.45); font: 700 10px 'Manrope',sans-serif; white-space: nowrap; }
+.fpv-readout b { color: #9de3ff; }
+.fpv-rec { color: #bfc9d2; }
+.fpv-rec i { display: inline-block; width: 7px; height: 7px; margin-right: 5px; border-radius: 50%; background: #7f8b94; }
+.fpv-readout.recording .fpv-rec { color: #fff; }
+.fpv-readout.recording .fpv-rec i { background: #ff5e53; box-shadow: 0 0 8px #ff5e53; }
+#app.fpv .reticle { top: 50%; width: 42px; height: 42px; border-color: #fff; }
+#app.fpv .reticle:before { left: 20px; top: -12px; height: 64px; }
+#app.fpv .reticle:after { top: 20px; left: -12px; width: 64px; }
+#app.fpv .reticle span { inset: 19px; background: #fff; }
+#app.fpv .compass { display: none; }
+#app.fpv .mission-panel { border-top: 3px solid #ef6657; }
+#app.fpv .scan-button:hover, #app.fpv.scanning .scan-button { background: #d44840; border-color: #ffa69d; box-shadow: 0 0 16px rgba(235,97,75,.4); }
+.scan-status { gap: 6px; margin-top: 5px; padding-top: 10px; border-top: 1px solid var(--brand-line); color: var(--brand-muted); font: 800 9px 'Manrope',sans-serif; white-space: nowrap; }
+.scan-status .scan-indicator { width: 7px; height: 7px; background: #b3bdc6; flex: none; }
+.scan-status #scan-message { margin-right: auto; }
+.scan-status #scan-range { color: #376fc2; }
+.scanning .scan-indicator { background: #80c3ff; box-shadow: 0 0 8px rgba(84,166,255,.8); }
+.scan-button { position: absolute; bottom: 55px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; justify-content: center; gap: 10px; min-width: 208px; height: 46px; padding: 0 15px; color: #fff; background: #233d57; border: 1px solid rgba(255,255,255,.7); border-radius: 3px; font: 800 11px 'Manrope',sans-serif; white-space: nowrap; }
+.scan-button .scan-symbol { font: 26px 'Manrope',sans-serif; line-height: 1; }
+.scan-button kbd { margin-left: auto; }
+.scan-button:hover, .scanning .scan-button { background: #2865ba; color: #fff; border-color: #a6d7ff; box-shadow: 0 0 16px rgba(68,155,255,.3); }
+.scan-button:disabled { opacity: .55; cursor: default; }
+#app.agriculture .scan-button:hover, #app.agriculture.scanning .scan-button { background: #286b95; border-color: #b1daf4; box-shadow: 0 0 16px rgba(95,177,225,.32); }
+.result-overlay[hidden] { display: none; }
+.result-overlay { position: absolute; inset: 0; z-index: 5; display: grid; place-items: center; padding: 20px; background: rgba(24,42,62,.73); backdrop-filter: blur(6px); }
+.result-content { width: min(100%, 420px); padding: 32px; background: #fff; color: var(--brand-ink); border-top: 5px solid var(--brand-blue); }
+.result-overlay.crashed .result-content { border-top-color: #e4644a; }
+.result-kicker { color: var(--brand-blue); font: 800 11px 'Manrope',sans-serif; }
+.result-overlay.crashed .result-kicker { color: #b84e3a; }
+.result-content h1 { margin: 13px 0 10px; font: 600 34px 'Oswald',sans-serif; }
+.result-content p { margin: 0 0 24px; color: var(--brand-muted); font-size: 13px; line-height: 1.55; }
+.result-content button { width: 100%; height: 48px; color: #fff; background: var(--brand-blue); border: 0; border-radius: 3px; font: 800 12px 'Manrope',sans-serif; }
+.result-content button:hover { background: #1648d4; }
+.briefing-overlay[hidden] { display: none; }
+.briefing-overlay { position: absolute; inset: 0; z-index: 6; display: grid; place-items: center; overflow-y: auto; padding: 20px; background: rgba(21,39,56,.82); backdrop-filter: blur(8px); }
+.briefing-content { width: min(100%, 530px); max-height: calc(100dvh - 40px); overflow-y: auto; padding: 30px 34px; border-top: 4px solid #2d76ed; background: #fff; color: var(--brand-ink); box-shadow: 0 22px 70px rgba(10,27,44,.25); }
+.briefing-kicker { color: #2865ba; font: 800 10px 'Manrope',sans-serif; }
+.briefing-content h1 { margin: 13px 0 16px; font: 600 29px 'Oswald',sans-serif; line-height: 1.18; }
+.briefing-content p { margin: 0 0 12px; color: #435366; font-size: 13px; line-height: 1.6; }
+.briefing-content #briefing-lead { color: var(--brand-ink); font-size: 15px; font-weight: 700; }
+.briefing-task { margin: 19px 0 22px; padding: 13px 0; border-top: 1px solid var(--brand-line); border-bottom: 1px solid var(--brand-line); color: var(--brand-ink); font-size: 13px; font-weight: 700; line-height: 1.5; }
+.briefing-content button { width: 100%; min-height: 46px; border: 0; border-radius: 3px; background: var(--brand-blue); color: #fff; font: 800 12px 'Manrope',sans-serif; }
+.briefing-content button:hover, .briefing-content button:focus-visible { background: #1648d4; }
+@media (max-height: 780px) and (min-width: 701px) and (pointer: fine) {
+  .mission-panel { top: 95px; padding: 10px; }
+  .mission-heading { padding-bottom: 8px; }
+  .mission-row { min-height: 55px; padding: 6px 0; }
+  .wall-progress { margin-top: 5px; }
+  .map-panel { bottom: 42px; width: 150px; }
+  #minimap { width: 124px; height: 124px; }
+  .map-caption { font-size: 8px; }
+}
+@media (pointer: coarse), (max-width: 700px) {
+  .fpv-readout { top: 63px; width: max-content; max-width: calc(100% - 20px); gap: 8px; padding: 5px 7px; font-size: 8px; }
+  #app.fpv .flight-status { display: none; }
+  #app.fpv .telemetry { top: 108px; }
+  .briefing-overlay { padding: 14px; }
+  .briefing-content { max-height: calc(100dvh - 28px); padding: 22px; }
+  .briefing-content h1 { font-size: 24px; }
+  .briefing-content p, .briefing-task { font-size: 12px; }
+  .mission-panel { top: 211px; right: 12px; width: 148px; padding: 8px; }
+  .mission-heading { padding-bottom: 5px; font-size: 8px; }
+  .mission-heading strong { font-size: 16px; }
+  .mission-row { min-height: 42px; padding: 4px 0; font-size: 9px; }
+  .mission-row .mission-name { gap: 5px; }
+  .mission-row .mission-name i { width: 6px; height: 6px; }
+  .mission-row .percent { font-size: 13px; }
+  .wall-progress { gap: 3px; margin-top: 3px; }
+  .wall-meter { gap: 2px; font-size: 7px; }
+  .wall-meter b { width: 11px; }
+  .wall-meter i { height: 4px; }
+  .field-progress { height: 5px; margin-top: 5px; }
+  .scan-status { font-size: 7px; margin-top: 2px; padding-top: 6px; }
+  .scan-status #scan-range { display: none; }
+  .scan-button { bottom: max(186px, calc(env(safe-area-inset-bottom) + 153px)); min-width: 172px; height: 41px; font-size: 9px; gap: 6px; padding: 0 10px; }
+  .scan-button kbd { display: none; }
+}
+@media (max-width: 360px) {
+  .mission-panel { top: 191px; width: 120px; padding: 6px; }
+  .mission-heading { font-size: 7px; }
+  .mission-row { font-size: 8px; }
+  .wall-progress { gap: 2px; }
+  .wall-meter { gap: 1px; font-size: 6px; }
+  .wall-meter b { width: 9px; }
+  .scan-button { bottom: 153px; }
+}
+@media (max-width: 700px) {
+  #app.fpv .fpv-readout { top: 255px; left: 12px; transform: none; }
+}
+@media (max-height: 550px) and (pointer: coarse) {
+  .mission-panel { top: 66px; right: 140px; }
+  .scan-button { left: 50%; bottom: 12px; min-width: 148px; }
+}

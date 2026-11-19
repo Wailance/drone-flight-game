@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#233d57" />
+    <title>Симулятор полёта | АэрогениИ</title>
+    <link rel="stylesheet" href="/src/style.css" />
+    <link rel="stylesheet" href="/src/brand.css" />
+    <link rel="stylesheet" href="/src/mission.css" />
+  </head>
+  <body>
+    <main id="app">
+      <div id="scene" aria-label="Трёхмерная карта для полёта на дроне"></div>
+      <img class="target-indicator" id="target-indicator" alt="" aria-hidden="true" hidden />
+      <div class="vignette" aria-hidden="true"></div>
+      <header class="topbar">
+        <div class="brand">
+          <img src="/logo.png" alt="Логотип АэрогениИ" />
+          <div><strong>АэрогениИ</strong><small>СИМУЛЯТОР ПОЛЁТА</small></div>
+        </div>
+        <div class="top-actions">
+          <div class="mode-label"><span class="live-dot"></span> МИССИЯ: <span id="mode-name">ОБСЛЕДОВАНИЕ</span></div>
+          <button id="reset" class="icon-button" type="button" title="Вернуть дрон на старт" aria-label="Вернуть дрон на старт">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 2.7-6.4"/><path d="M3 4v5h5"/></svg>
+          </button>
+          <button id="pause" class="icon-button" type="button" title="Пауза" aria-label="Пауза">
+            <svg class="pause-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
+            <svg class="play-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg>
+          </button>
+        </div>
+      </header>
+      <div class="flight-status" id="flight-status"><span class="live-dot"></span> В ПОЛЁТЕ</div>
+      <aside class="telemetry" aria-label="Показатели полёта">
+        <div class="telemetry-item"><span>ВЫСОТА</span><strong><span id="altitude">8.0</span><em>м</em></strong></div>
+        <div class="telemetry-item"><span>СКОРОСТЬ</span><strong><span id="speed">0</span><em>км/ч</em></strong></div>
+        <div class="telemetry-item"><span>ДИСТАНЦИЯ</span><strong><span id="distance">0</span><em>м</em></strong></div>
+      </aside>
+      <div class="compass" aria-label="Направление полёта"><span id="heading">С</span><i></i></div>
+      <div class="reticle" aria-hidden="true"><span></span></div>
+      <div class="fpv-readout" id="fpv-readout" hidden aria-live="off">
+        <span class="fpv-rec"><i></i> REC</span>
+        <span id="fpv-target">НАЙДИТЕ БОЛИД</span>
+        <span>ТЯГА <b id="fpv-throttle">53%</b></span>
+      </div>
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+      <aside class="mission-panel" aria-label="Задание по сканированию">
+        <div class="mission-heading"><span id="mission-heading-label">01 / ОБСЛЕДОВАНИЕ</span><strong id="mission-total">0 / 1</strong></div>
+        <div class="mission-list" id="mission-list"></div>
+        <div class="scan-status"><span class="scan-indicator"></span><span id="scan-message">ЛИДАР ВЫКЛЮЧЕН</span><span id="scan-range">ДО 38 М</span></div>
+      </aside>
+      <button id="scan" class="scan-button" type="button" aria-pressed="false" title="Включить или выключить лидар (F)">
+        <span class="scan-symbol" aria-hidden="true">◎</span><span id="scan-label">ВКЛЮЧИТЬ ЛИДАР</span><kbd>F</kbd>
+      </button>
+      <aside class="map-panel" aria-label="Мини-карта района">
+        <div class="panel-title"><span>ПОЛИГОН 01</span><span class="map-coordinates" id="coordinates">0, 0</span></div>
+        <canvas id="minimap" width="180" height="180" aria-label="Положение дрона на карте"></canvas>
+        <div class="map-caption"><span class="map-pin"></span> ВАШ ДРОН <span class="map-scale">160 × 160 М</span></div>
+      </aside>
+      <div class="help-panel" id="help-panel">
+        <div class="help-title">УПРАВЛЕНИЕ <button id="help-close" type="button" aria-label="Скрыть подсказку" title="Скрыть подсказку">×</button></div>
+        <div class="help-row"><span id="help-move">Движение</span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></div>
+        <div class="help-row"><span>Поворот</span><kbd>Q</kbd><kbd>E</kbd></div>
+        <div class="help-row"><span id="help-rise">Высота</span><kbd>ПРОБЕЛ</kbd><kbd>SHIFT</kbd></div>
+        <div class="help-row"><span id="help-action">Лидар</span><kbd>F</kbd></div>
+      </div>
+      <div class="mobile-controls" aria-label="Сенсорное управление">
+        <div class="stick-group"><div class="stick" id="move-stick" aria-label="Джойстик движения"><div class="stick-knob"></div></div><span id="move-stick-label">ДВИЖЕНИЕ</span></div>
+        <div class="stick-group"><div class="stick" id="look-stick" aria-label="Джойстик поворота и высоты"><div class="stick-knob"></div></div><span id="look-stick-label">ПОВОРОТ / ВЫСОТА</span></div>
+      </div>
+      <div class="bottom-line"><span>АЭРОГЕНИИ / ПОЛИГОН 01</span><span>СИГНАЛ <b>● ● ● ●</b></span></div>
+      <div class="result-overlay" id="result-overlay" hidden>
+        <div class="result-content">
+          <span class="result-kicker" id="result-kicker">ВЫЛЕТ ПРЕРВАН</span>
+          <h1 id="result-title">Дрон разбился</h1>
+          <p id="result-description">Столкновение с препятствием. Начните миссию заново.</p>
+          <button id="restart" type="button">НАЧАТЬ ЗАНОВО</button>
+        </div>
+      </div>
+      <div class="briefing-overlay" id="briefing-overlay" role="dialog" aria-modal="true" aria-labelledby="briefing-title" hidden>
+        <div class="briefing-content">
+          <span class="briefing-kicker" id="briefing-kicker"></span>
+          <h1 id="briefing-title"></h1>
+          <p id="briefing-lead"></p>
+          <p id="briefing-context"></p>
+          <div class="briefing-task" id="briefing-task"></div>
+          <button id="briefing-start" type="button">НАЧАТЬ ПОЛЁТ</button>
+        </div>
+      </div>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
