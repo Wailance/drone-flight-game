@@ -20,13 +20,33 @@ scene.background = new THREE.Color(0xb9cdd5);
 scene.fog = new THREE.FogExp2(0xb9cdd5, 0.0055);
 
 const container = document.querySelector('#scene');
-const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+const graphicsError = document.querySelector('#graphics-error');
+const mobileGraphics = window.matchMedia('(pointer: coarse)').matches;
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({
+    antialias: !mobileGraphics,
+    powerPreference: mobileGraphics ? 'default' : 'high-performance',
+    stencil: false,
+  });
+} catch (error) {
+  graphicsError.querySelector('p').textContent = 'Не удалось запустить 3D-графику. Откройте игру в актуальной версии Safari и попробуйте ещё раз.';
+  graphicsError.hidden = false;
+  throw error;
+}
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mobileGraphics ? 1 : 2));
 renderer.setSize(container.clientWidth, container.clientHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.65;
 container.appendChild(renderer.domElement);
+renderer.domElement.addEventListener('webglcontextlost', () => {
+  graphicsError.querySelector('p').textContent = '3D-графика остановилась. Нажмите «Повторить запуск», чтобы вернуться в игру.';
+  graphicsError.hidden = false;
+});
+renderer.domElement.addEventListener('webglcontextrestored', () => {
+  graphicsError.hidden = true;
+});
 
 const camera = new THREE.PerspectiveCamera(65, container.clientWidth / container.clientHeight, 0.1, 500);
 const ambient = new THREE.HemisphereLight(0xf1f7ff, 0x697b77, 2.3);
@@ -1545,7 +1565,10 @@ function resize() {
   camera.aspect = container.clientWidth / container.clientHeight;
   camera.fov = mission === 3 ? 88 : camera.aspect < 0.8 ? 72 : 65;
   camera.updateProjectionMatrix();
-  renderer.setSize(container.clientWidth, container.clientHeight);
+  const size = renderer.getSize(new THREE.Vector2());
+  if (size.x !== container.clientWidth || size.y !== container.clientHeight) {
+    renderer.setSize(container.clientWidth, container.clientHeight);
+  }
 }
 window.addEventListener('resize', resize);
 if (new URLSearchParams(window.location.search).get('mission') === '2') {

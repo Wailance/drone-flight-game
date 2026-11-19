@@ -12,6 +12,10 @@
   <body>
     <main id="app">
       <div id="scene" aria-label="Трёхмерная карта для полёта на дроне"></div>
+      <div id="graphics-error" class="graphics-error" role="alert" hidden>
+        <p id="graphics-error-message"></p>
+        <button type="button" onclick="window.location.reload()">Повторить запуск</button>
+      </div>
       <img class="target-indicator" id="target-indicator" alt="" aria-hidden="true" hidden />
       <div class="vignette" aria-hidden="true"></div>
       <header class="topbar">
