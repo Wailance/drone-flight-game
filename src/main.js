@@ -22,6 +22,9 @@ scene.fog = new THREE.FogExp2(0xb9cdd5, 0.0055);
 const container = document.querySelector('#scene');
 const graphicsError = document.querySelector('#graphics-error');
 const mobileGraphics = window.matchMedia('(pointer: coarse)').matches;
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+if (isIOS) document.querySelector('#app').classList.add('ios-device');
 let renderer;
 try {
   renderer = new THREE.WebGLRenderer({
@@ -34,7 +37,7 @@ try {
   graphicsError.hidden = false;
   throw error;
 }
-renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mobileGraphics ? 1 : 2));
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isIOS ? 0.8 : mobileGraphics ? 1 : 2));
 renderer.setSize(container.clientWidth, container.clientHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -1186,33 +1189,71 @@ function setupStick(id, input) {
   const element = document.querySelector(id);
   const knob = element.querySelector('.stick-knob');
   let pointerId = null;
-  function update(event) {
+  let touchId = null;
+  function update(clientX, clientY) {
     const rect = element.getBoundingClientRect();
     const range = rect.width * 0.34;
-    const dx = event.clientX - rect.left - rect.width / 2;
-    const dy = event.clientY - rect.top - rect.height / 2;
+    const dx = clientX - rect.left - rect.width / 2;
+    const dy = clientY - rect.top - rect.height / 2;
     const factor = Math.min(1, range / (Math.hypot(dx, dy) || 1));
     input.x = dx * factor / range;
     input.y = dy * factor / range;
     knob.style.transform = `translate(calc(-50% + ${input.x * range}px), calc(-50% + ${input.y * range}px))`;
   }
-  element.addEventListener('pointerdown', event => {
-    if (pointerId !== null) return;
-    pointerId = event.pointerId;
-    element.setPointerCapture(pointerId);
-    update(event);
-  });
-  element.addEventListener('pointermove', event => { if (event.pointerId === pointerId) update(event); });
-  function release(event) {
-    if (event.pointerId !== pointerId) return;
+  function release() {
     pointerId = null;
+    touchId = null;
     input.x = 0;
     input.y = 0;
     knob.style.transform = 'translate(-50%, -50%)';
   }
-  element.addEventListener('pointerup', release);
-  element.addEventListener('pointercancel', release);
-  element.addEventListener('lostpointercapture', release);
+  if (isIOS) {
+    element.addEventListener('touchstart', event => {
+      if (touchId !== null || !event.changedTouches.length) return;
+      event.preventDefault();
+      const touch = event.changedTouches[0];
+      touchId = touch.identifier;
+      update(touch.clientX, touch.clientY);
+    }, { passive: false });
+    element.addEventListener('touchmove', event => {
+      const touch = [...event.changedTouches].find(item => item.identifier === touchId);
+      if (!touch) return;
+      event.preventDefault();
+      update(touch.clientX, touch.clientY);
+    }, { passive: false });
+    const endTouch = event => {
+      if ([...event.changedTouches].some(item => item.identifier === touchId)) release();
+    };
+    element.addEventListener('touchend', endTouch, { passive: true });
+    element.addEventListener('touchcancel', endTouch, { passive: true });
+  } else {
+    element.addEventListener('pointerdown', event => {
+      if (pointerId !== null) return;
+      event.preventDefault();
+      pointerId = event.pointerId;
+      element.setPointerCapture(pointerId);
+      update(event.clientX, event.clientY);
+    });
+    element.addEventListener('pointermove', event => {
+      if (event.pointerId === pointerId) update(event.clientX, event.clientY);
+    });
+    function releasePointer(event) {
+      if (event.pointerId !== pointerId) return;
+      release();
+    }
+    element.addEventListener('pointerup', releasePointer);
+    element.addEventListener('pointercancel', releasePointer);
+    element.addEventListener('lostpointercapture', releasePointer);
+  }
+  function resetOnBlur() {
+    if (pointerId !== null || touchId !== null) {
+      release();
+    }
+  }
+  window.addEventListener('blur', resetOnBlur);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) resetOnBlur();
+  });
 }
 setupStick('#move-stick', sticks.move);
 setupStick('#look-stick', sticks.look);
