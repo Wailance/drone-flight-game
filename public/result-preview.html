@@ -7,17 +7,19 @@
     <title>Финальный экран | Аэрогении</title>
     <style>
       * { box-sizing: border-box; }
-      body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 20px; background: #1b3047; color: #303747; font: 14px Arial, sans-serif; }
-      .result { width: min(100%, 470px); padding: 30px; border-top: 5px solid #1f5bff; background: #fff; box-shadow: 0 24px 80px rgba(5,19,34,.35); }
+      body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 20px; background: linear-gradient(135deg,#112d4b,#1f5bff 55%,#5d91ff); color: #303747; font: 14px Arial, sans-serif; }
+      .result { position:relative; overflow:hidden; width: min(100%, 470px); padding: 30px; border:1px solid #9bbcff; border-top: 7px solid #172f4d; background: linear-gradient(145deg,#fff,#e8f1ff); box-shadow: 0 24px 80px rgba(5,19,34,.4); }
+      .result::after { position:absolute; right:-100px; top:160px; width:300px; height:300px; border:30px solid rgba(31,91,255,.06); border-radius:50%; content:""; }
       .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; color: #233d57; font-weight: 800; }
       .brand img { width: 46px; height: 46px; object-fit: contain; }
       .kicker { color: #1f5bff; font-size: 10px; font-weight: 800; letter-spacing: .08em; }
       h1 { margin: 12px 0 9px; color: #303747; font: 600 34px Georgia, serif; }
       .lead { margin: 0 0 18px; color: #717171; line-height: 1.55; }
-      .certificate { margin-bottom: 16px; padding: 14px; border: 1px solid #c9d8f3; background: #f3f7ff; }
+      .certificate { position:relative; z-index:1; margin-bottom: 16px; padding: 15px; border: 1px solid #b7d0ef; background: linear-gradient(100deg,#e6efff,#f8fbff); }
       .certificate-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: #1f5bff; font-size: 10px; font-weight: 800; }
       .amount { color: #303747; font: 600 25px Georgia, serif; white-space: nowrap; }
       .certificate p { margin: 8px 0; color: #566477; font-size: 12px; line-height: 1.45; }
+      .certificate small { display:block; margin-top:12px; padding-top:10px; border-top:1px solid #c8d7f1; color:#718096; font-size:10px; }
       .download { display:block; margin-top:12px; padding:12px; background:#1f5bff; color:#fff; text-align:center; font-size:10px; font-weight:800; }
       a { color: #1648d4; font-weight: 800; }
       .invite { display: grid; gap: 6px; margin-bottom: 18px; padding: 14px; border-left: 3px solid #1f5bff; background: #eef4ff; }
@@ -37,7 +39,8 @@
       <p class="lead">Вы прошли все три уровня и попробовали себя в обследовании, сельском хозяйстве и FPV-съёмке.</p>
       <div class="certificate">
         <div class="certificate-head"><span>ВАШ КУПОН НА ОБУЧЕНИЕ</span><strong class="amount">5 000 ₽</strong></div>
-        <p>Накопленная скидка: <b>10 000 ₽ из 10 000 ₽</b>. Купон действует после подписки на <a href="https://vk.com/aerogenii_kirov" target="_blank" rel="noreferrer">группу школы в VK</a>.</p>
+        <p>Скидка на курс «Инструкторский» или «Специалист».</p>
+        <small>Накопленная скидка: <b>10 000 ₽ из 10 000 ₽</b>. Для активации подпишитесь на <a href="https://vk.com/aerogenii_kirov" target="_blank" rel="noreferrer">группу школы в VK</a>.<br />Выдан 23 ноября 2026 · № AERO-FINAL-PREVIEW</small>
         <button class="download" data-level="3" data-amount="5000" data-total="10000">СКАЧАТЬ СЕРТИФИКАТ</button>
       </div>
       <div class="invite">
