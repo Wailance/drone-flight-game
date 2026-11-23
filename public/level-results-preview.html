@@ -65,7 +65,7 @@
       </div>
       <a class="back" href="./result-preview.html">Посмотреть финальный экран после всех уровней →</a>
     </main>
-    <script src="certificate-download.js"></script>
+    <script src="certificate-download.js?v=3"></script>
     <script>
       document.querySelectorAll('.download').forEach(button => button.addEventListener('click', () => {
         window.downloadPreviewCertificate({ level: Number(button.dataset.level), amount: Number(button.dataset.amount), total: Number(button.dataset.total) });
