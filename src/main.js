@@ -1,9 +1,12 @@
 import * as THREE from 'three';
+import { recordGameEvent } from './analytics.js';
 
 const WORLD = 80;
 const START = new THREE.Vector3(0, 16, 54);
 const FARM_START = new THREE.Vector3(0, 9, 49);
 const RACE_START = new THREE.Vector3(-15, 8, 72);
+const CERTIFICATE_AWARDS = { 1: 2000, 2: 3000, 3: 5000 };
+const CERTIFICATE_STORAGE_KEY = 'aerogenii-course-certificates-v1';
 const SPRAY_MIN_HEIGHT = 4;
 const SPRAY_MAX_HEIGHT = 14;
 const WALLS = [
@@ -719,8 +722,11 @@ let throttle = 0.53;
 let fpvYaw = 0;
 let fpvPitch = 0;
 let fpvRoll = 0;
+let fpvPitchRate = 0;
+let fpvRollRate = 0;
 let raceTime = 0;
 let toastTimeout;
+let activeCertificate = null;
 const velocity = new THREE.Vector3();
 const clock = new THREE.Clock();
 const desiredCamera = new THREE.Vector3();
@@ -791,6 +797,7 @@ function updateMission() {
   document.querySelector('#mission-total').textContent = `${completed} / ${sites.length}`;
   if (completed === sites.length && !finished) {
     finished = true;
+    recordGameEvent('mission_complete', { mission });
     setScanning(false);
     document.querySelector('#flight-status').textContent = 'МИССИЯ ВЫПОЛНЕНА';
     showResult(false);
@@ -811,6 +818,7 @@ function updateFarmMission() {
   document.querySelector('#mission-total').textContent = `${complete} / ${fields.length}`;
   if (complete === fields.length && !finished) {
     finished = true;
+    recordGameEvent('mission_complete', { mission });
     setScanning(false);
     document.querySelector('#flight-status').textContent = 'МИССИЯ ВЫПОЛНЕНА';
     showResult(false);
@@ -829,6 +837,7 @@ function updateRaceMission() {
   document.querySelector('#mission-total').textContent = `${raceCars.filter(car => car.userData.captured >= 7).length} / ${raceCars.length}`;
   if (allCaptured && !finished) {
     finished = true;
+    recordGameEvent('mission_complete', { mission });
     setScanning(false);
     document.querySelector('#flight-status').textContent = 'МИССИЯ ВЫПОЛНЕНА';
     showResult(false);
@@ -847,9 +856,121 @@ function setScanning(value) {
   fpvReadout.classList.toggle('recording', scanning && mission === 3);
 }
 
+function readCertificates() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(CERTIFICATE_STORAGE_KEY) || '[]');
+    if (!Array.isArray(saved)) return [];
+    const unique = new Map();
+    for (const item of saved) {
+      if (item && CERTIFICATE_AWARDS[item.level] && !unique.has(item.level)) unique.set(item.level, item);
+    }
+    return [...unique.values()];
+  } catch {
+    return [];
+  }
+}
+
+function awardCertificate(level) {
+  const certificates = readCertificates();
+  let certificate = certificates.find(item => item.level === level);
+  if (!certificate) {
+    const now = new Date();
+    certificate = {
+      level,
+      id: `AERO-${level}-${now.getTime().toString(36).toUpperCase()}`,
+      awardedAt: now.toISOString(),
+    };
+    certificates.push(certificate);
+    try {
+      localStorage.setItem(CERTIFICATE_STORAGE_KEY, JSON.stringify(certificates));
+    } catch {
+      showToast('Сертификат доступен до перезагрузки страницы');
+    }
+  }
+  return {
+    ...certificate,
+    amount: CERTIFICATE_AWARDS[level],
+    total: certificates.reduce((sum, item) => sum + CERTIFICATE_AWARDS[item.level], 0),
+  };
+}
+
+function downloadCertificate(certificate) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1200;
+  canvas.height = 850;
+  const context = canvas.getContext('2d');
+  if (!context) return;
+  const levelNames = {
+    1: 'ОБСЛЕДОВАНИЕ ОБЪЕКТА',
+    2: 'РАБОТА С АГРОДРОНОМ',
+    3: 'FPV-СЪЁМКА',
+  };
+  const amount = new Intl.NumberFormat('ru-RU').format(certificate.amount);
+  const total = new Intl.NumberFormat('ru-RU').format(certificate.total);
+  const date = new Intl.DateTimeFormat('ru-RU', { dateStyle: 'long' }).format(new Date(certificate.awardedAt));
+
+  context.fillStyle = '#f2f6fc';
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = '#ffffff';
+  context.fillRect(32, 32, 1136, 786);
+  context.strokeStyle = '#1f5bff';
+  context.lineWidth = 4;
+  context.strokeRect(48, 48, 1104, 754);
+  context.fillStyle = '#233d57';
+  context.fillRect(48, 48, 1104, 14);
+  context.fillStyle = '#1f5bff';
+  context.font = '700 23px Arial, sans-serif';
+  context.textAlign = 'center';
+  context.fillText('АЭРОГЕНИИ  /  СИМУЛЯТОР ПОЛЁТА', 600, 125);
+  context.fillStyle = '#303747';
+  context.font = '600 62px Georgia, serif';
+  context.fillText('СЕРТИФИКАТ', 600, 238);
+  context.fillStyle = '#717171';
+  context.font = '24px Arial, sans-serif';
+  context.fillText('за успешное прохождение уровня', 600, 294);
+  context.fillStyle = '#233d57';
+  context.font = '700 30px Arial, sans-serif';
+  context.fillText(`УРОВЕНЬ 0${certificate.level}  /  ${levelNames[certificate.level]}`, 600, 362);
+  context.fillStyle = '#1f5bff';
+  context.font = '700 76px Arial, sans-serif';
+  context.fillText(`${amount} ₽`, 600, 492);
+  context.fillStyle = '#303747';
+  context.font = '25px Arial, sans-serif';
+  context.fillText('скидка на обучение по выбору:', 600, 554);
+  context.font = '700 28px Arial, sans-serif';
+  context.fillText('«Инструкторский» или «Специалист»', 600, 600);
+  context.fillStyle = '#717171';
+  context.font = '21px Arial, sans-serif';
+  context.fillText(`Накопленная скидка: ${total} ₽ из 10 000 ₽`, 600, 665);
+  context.font = '18px Arial, sans-serif';
+  context.fillText(`Выдан ${date}  ·  № ${certificate.id}`, 600, 744);
+  context.fillStyle = '#233d57';
+  context.fillRect(48, 788, 1104, 14);
+
+  canvas.toBlob(blob => {
+    if (!blob) return;
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `aerogenii-sertifikat-uroven-${certificate.level}.png`;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }, 'image/png');
+}
+
 function showResult(isCrash) {
   overlay.hidden = false;
   overlay.classList.toggle('crashed', isCrash);
+  document.querySelector('#final-invite').hidden = isCrash || mission !== 3;
+  const certificatePanel = document.querySelector('#certificate-panel');
+  activeCertificate = isCrash ? null : awardCertificate(mission);
+  certificatePanel.hidden = !activeCertificate;
+  if (activeCertificate) {
+    const formatRubles = value => `${new Intl.NumberFormat('ru-RU').format(value)} ₽`;
+    document.querySelector('#certificate-amount').textContent = formatRubles(activeCertificate.amount);
+    document.querySelector('#certificate-total').textContent =
+      `Накопленная скидка: ${formatRubles(activeCertificate.total)} из 10 000 ₽`;
+  }
   document.querySelector('#result-kicker').textContent = isCrash ? 'ВЫЛЕТ ПРЕРВАН' : mission === 3 ? 'ВСЕ МИССИИ ЗАВЕРШЕНЫ' : `ЭТАП 0${mission} ЗАВЕРШЁН`;
   document.querySelector('#result-title').textContent = isCrash ? 'Дрон разбился' : mission === 1 ? 'Корпус обследован' : mission === 2 ? 'Поле полито' : 'Гонка снята';
   document.querySelector('#result-description').textContent = isCrash
@@ -868,20 +989,24 @@ function showBriefing() {
   briefingOpen = true;
   setScanning(false);
   const first = mission === 1;
+  document.querySelector('#briefing-visual').className = 'briefing-visual';
   document.querySelector('#briefing-kicker').textContent = first ? 'МИССИЯ 01 / ОБСЛЕДОВАНИЕ' : mission === 2 ? 'МИССИЯ 02 / СЕЛЬСКОЕ ХОЗЯЙСТВО' : 'МИССИЯ 03 / FPV-СЪЁМКА';
   document.querySelector('#briefing-title').textContent = first ? 'Обследование здания' : mission === 2 ? 'Полив поля' : 'Съёмка автогонки';
   document.querySelector('#briefing-lead').textContent = first
-    ? 'Здравствуйте! Добро пожаловать в «АэрогениИ».'
-    : mission === 2 ? 'Отличная работа! Теперь попробуйте себя в агросекторе.'
-      : 'Теперь вы FPV-оператор на гоночной трассе.';
+    ? 'Добро пожаловать в «АэрогениИ». Попробуйте себя в реальной профессии оператора БПЛА.'
+    : mission === 2 ? 'Следующий шаг — агродроны: полёт, точность и работа с большим полем.'
+      : 'Финальный уровень — FPV-съёмка: скорость, точный пилотаж и кадр.';
   document.querySelector('#briefing-context').textContent = first
-    ? 'Оператор БПЛА — реальная профессия. Дроны применяют в строительстве, съёмке, картографии и мониторинге объектов. Освоить управление можно с нуля или развить навыки на очном и онлайн-обучении.'
-    : mission === 2 ? 'Операторы агродронов работают с посевами и обрабатывают поля. Один дрон, разные задачи: именно за это профессию интересно осваивать.'
-      : 'FPV-съёмка требует точного пилотирования и чувства кадра. Теперь камера находится на самом дроне: следите за двумя болидами и ведите их через повороты.';
+    ? 'Дроны применяют в строительстве, картографии, съёмке и мониторинге объектов.'
+    : mission === 2 ? 'Агродроны помогают обрабатывать большие площади быстро и равномерно.'
+      : 'FPV-операторы снимают спорт, рекламу и кино с необычной динамикой.';
   document.querySelector('#briefing-task').textContent = first
-    ? 'Ваша задача: облететь корпус и просканировать лидаром все четыре фасада и крышу. Избегайте столкновений.'
-    : mission === 2 ? 'Ваша задача: равномерно полить всё поле. Включите полив и держите высоту от 4 до 14 м.'
-      : 'Снимите оба болида по 7 секунд: удерживайте каждый близко и в центре кадра. F — запись. W/S — наклон вперёд/назад, A/D — крен, Q/E — поворот, ПРОБЕЛ/SHIFT — тяга. На телефоне: левый стик — тяга/поворот, правый — наклон/крен.';
+    ? 'Задание: просканируйте лидаром все фасады и крышу здания.'
+    : mission === 2 ? 'Задание: обработайте всё поле, удерживая высоту от 4 до 14 м.'
+      : 'Задание: снимите оба болида по 7 секунд. F — запись, W/S — наклон, A/D — крен, Q/E — поворот, ПРОБЕЛ/SHIFT — тяга.';
+  document.querySelector('#briefing-coupon').textContent = first
+    ? 'Купоны за прохождение: до 10 000 ₽ скидки на обучение.'
+    : `За этот уровень начисляется купон ${mission === 2 ? '3 000' : '5 000'} ₽.`;
   briefing.hidden = false;
   document.querySelector('#briefing-start').focus();
 }
@@ -889,6 +1014,7 @@ function showBriefing() {
 function crash() {
   if (crashed) return;
   crashed = true;
+  recordGameEvent('crash', { mission });
   velocity.set(0, 0, 0);
   setScanning(false);
   drone.rotation.x = 0.42;
@@ -1002,6 +1128,8 @@ function showToast(message) {
 }
 
 function reset(notify = true) {
+  const wasRunning = !crashed && !finished;
+  if (wasRunning && distanceTravelled > 0) recordGameEvent('mission_reset', { mission });
   crashed = false;
   finished = false;
   paused = false;
@@ -1036,6 +1164,8 @@ function reset(notify = true) {
     fpvYaw = 0;
     fpvPitch = 0;
     fpvRoll = 0;
+    fpvPitchRate = 0;
+    fpvRollRate = 0;
     for (const car of raceCars) car.userData.captured = 0;
     updateRaceCars(0);
   }
@@ -1055,6 +1185,7 @@ function reset(notify = true) {
 
 function startAgriculture() {
   mission = 2;
+  recordGameEvent('mission_start', { mission });
   cityGroup.visible = false;
   farmGroup.visible = true;
   raceGroup.visible = false;
@@ -1082,6 +1213,7 @@ function startAgriculture() {
 
 function startRace() {
   mission = 3;
+  recordGameEvent('mission_start', { mission });
   cityGroup.visible = false;
   farmGroup.visible = false;
   raceGroup.visible = true;
@@ -1176,6 +1308,12 @@ document.querySelector('#restart').addEventListener('click', () => {
   else if (!crashed && mission === 2) startRace();
   else if (!crashed && mission === 3) restartFromBeginning();
   else reset();
+});
+document.querySelector('#download-certificate').addEventListener('click', () => {
+  if (activeCertificate) {
+    recordGameEvent('certificate_download', { mission });
+    downloadCertificate(activeCertificate);
+  }
 });
 document.querySelector('#briefing-start').addEventListener('click', () => {
   briefing.hidden = true;
@@ -1279,23 +1417,25 @@ function updateFpvFlight(dt) {
     (keys.has('KeyE') ? 1 : 0) - (keys.has('KeyQ') ? 1 : 0) + sticks.move.x, -1, 1);
   const thrustInput = THREE.MathUtils.clamp(
     (keys.has('Space') ? 1 : 0) - (keys.has('ShiftLeft') || keys.has('ShiftRight') ? 1 : 0) - sticks.move.y, -1, 1);
-  throttle = THREE.MathUtils.clamp(throttle + thrustInput * dt * 0.42, 0, 1);
+  throttle = THREE.MathUtils.clamp(throttle + thrustInput * dt * 1.8, 0, 1);
   fpvThrottle.textContent = `${Math.round(throttle * 100)}%`;
   fpvYaw -= yawInput * dt * 1.8;
-  const blend = 1 - Math.exp(-dt * 5);
-  fpvPitch = THREE.MathUtils.lerp(fpvPitch, -pitchInput * 0.55, blend);
-  fpvRoll = THREE.MathUtils.lerp(fpvRoll, -rollInput * 0.55, blend);
+  const controlBlend = 1 - Math.exp(-dt * 2.8);
+  fpvPitchRate = THREE.MathUtils.lerp(fpvPitchRate, -pitchInput * 0.9, controlBlend);
+  fpvRollRate = THREE.MathUtils.lerp(fpvRollRate, -rollInput * 0.9, controlBlend);
+  fpvPitch = THREE.MathUtils.clamp(fpvPitch + fpvPitchRate * dt, -0.7, 0.7);
+  fpvRoll = THREE.MathUtils.clamp(fpvRoll + fpvRollRate * dt, -0.7, 0.7);
   drone.rotation.order = 'YXZ';
   drone.rotation.set(fpvPitch, fpvYaw, fpvRoll);
   fpvUp.set(0, 1, 0).applyQuaternion(drone.quaternion);
   velocity.addScaledVector(fpvUp, throttle * 30 * dt);
-  velocity.y -= 15 * dt;
+  velocity.y = THREE.MathUtils.lerp(velocity.y, thrustInput * 10, 1 - Math.exp(-dt * 7));
   velocity.x *= Math.exp(-dt * 0.45);
   velocity.z *= Math.exp(-dt * 0.45);
   velocity.y *= Math.exp(-dt * 0.65);
   velocity.clampLength(0, 29);
   const next = drone.position.clone().addScaledVector(velocity, dt);
-  if (next.y < 1.4 || next.y > 47 || blocked(next.x, next.y, next.z) ||
+  if (next.y < 1.4 || next.y > 65 || blocked(next.x, next.y, next.z) ||
     raceCars.some(car => next.distanceTo(car.position.clone().add(new THREE.Vector3(0, 1, 0))) < 2)) {
     crash();
     return;
@@ -1619,5 +1759,9 @@ if (new URLSearchParams(window.location.search).get('mission') === '2') {
 } else {
   reset(false);
   showBriefing();
+  recordGameEvent('mission_start', { mission });
 }
+document.querySelectorAll('[data-analytics-contact]').forEach(link => {
+  link.addEventListener('click', () => recordGameEvent('contact_click', { mission }));
+});
 frame();

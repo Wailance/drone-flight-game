@@ -22,6 +22,9 @@ button { font: inherit; cursor: pointer; }
 .brand-mark { width: 33px; height: 33px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; transform: rotate(45deg); flex: none; }
 .brand-mark span { border: 3px solid #b8eb76; border-radius: 50%; }
 .top-actions { display: flex; align-items: center; gap: 10px; }
+.school-phone { display: inline-flex; align-items: center; gap: 8px; min-height: 38px; padding: 0 12px; border: 1px solid rgba(255,255,255,.35); color: #fff; text-decoration: none; font: 800 9px 'Manrope',sans-serif; }
+.school-phone svg { width: 16px; height: 16px; flex: none; }
+.school-phone:hover, .school-phone:focus-visible { background: #1f5bff; border-color: #fff; }
 .mode-label, .flight-status, .panel-title, .map-caption, .help-title, .help-row, .bottom-line, .compass, .telemetry-item>span, .stick-group>span { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: .04em; }
 .mode-label { margin-right: 15px; color: #cae2d9; white-space: nowrap; }
 .live-dot { display: inline-block; width: 7px; height: 7px; margin-right: 7px; border-radius: 50%; background: #b8eb76; box-shadow: 0 0 9px #b8eb76; vertical-align: 1px; }
@@ -73,6 +76,9 @@ kbd { min-width: 24px; padding: 5px 6px; text-align: center; color: #eaf5f0; fon
   .brand small { font-size: 7px; margin-top: 3px; }
   .mode-label, .help-panel, .bottom-line { display: none; }
   .top-actions { gap: 6px; }
+  .school-phone { width: 34px; min-height: 34px; justify-content: center; padding: 0; }
+  .school-phone span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .school-phone svg { width: 16px; height: 16px; }
   .icon-button { width: 34px; height: 34px; }
   .flight-status { top: 73px; left: 12px; padding: 7px 9px; font-size: 9px; }
   .telemetry { top: 106px; left: 12px; width: 136px; padding: 0 9px; }

@@ -24,6 +24,10 @@
           <div><strong>АэрогениИ</strong><small>СИМУЛЯТОР ПОЛЁТА</small></div>
         </div>
         <div class="top-actions">
+          <a class="school-phone" href="tel:+78332250309" aria-label="Позвонить в школу Аэрогении" title="Позвонить: +7 (8332) 25-03-09" data-analytics-contact>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.4 19.4 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7l.5 3a2 2 0 0 1-.6 1.8L7.1 10.4a16 16 0 0 0 6 6l1.9-1.9a2 2 0 0 1 1.8-.6l3 .5a2 2 0 0 1 2.2 2.5Z"/></svg>
+            <span>СВЯЗАТЬСЯ СО ШКОЛОЙ</span>
+          </a>
           <div class="mode-label"><span class="live-dot"></span> МИССИЯ: <span id="mode-name">ОБСЛЕДОВАНИЕ</span></div>
           <button id="reset" class="icon-button" type="button" title="Вернуть дрон на старт" aria-label="Вернуть дрон на старт">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 2.7-6.4"/><path d="M3 4v5h5"/></svg>
@@ -78,20 +82,50 @@
           <span class="result-kicker" id="result-kicker">ВЫЛЕТ ПРЕРВАН</span>
           <h1 id="result-title">Дрон разбился</h1>
           <p id="result-description">Столкновение с препятствием. Начните миссию заново.</p>
+          <div class="school-contact result-contact">
+            <strong>Хотите попробовать управлять настоящим дроном?</strong>
+            <a href="tel:+78332250309" data-analytics-contact>+7 (8332) 25-03-09</a>
+            <span>Киров, ул. Широтная, д. 2</span>
+          </div>
+          <div class="certificate-panel" id="certificate-panel" hidden>
+            <div><span>СЕРТИФИКАТ НА ОБУЧЕНИЕ</span><strong id="certificate-amount">2 000 ₽</strong></div>
+            <p id="certificate-course">Купон действует после подписки на <a href="https://vk.com/aerogenii_kirov" target="_blank" rel="noreferrer" data-analytics-contact>группу школы в VK</a>. Курс: «Инструкторский» или «Специалист».</p>
+            <small id="certificate-total">Накопленная скидка: 2 000 ₽ из 10 000 ₽</small>
+            <button id="download-certificate" type="button">СКАЧАТЬ СЕРТИФИКАТ</button>
+          </div>
+          <section class="final-invite" id="final-invite" hidden>
+            <span>СЛЕДУЮЩИЙ ШАГ</span>
+            <strong>Попробуйте профессию вживую</strong>
+            <p>В школе «Аэрогении» можно начать с нуля, потренироваться на полигоне и выбрать направление: инструктор, специалист или FPV-оператор.</p>
+            <a href="tel:+78332250309" data-analytics-contact>+7 (8332) 25-03-09</a>
+            <a href="https://vk.com/aerogenii_kirov" target="_blank" rel="noreferrer" data-analytics-contact>Группа «Аэрогении» во ВКонтакте ↗</a>
+            <small>Киров, ул. Широтная, д. 2</small>
+          </section>
           <button id="restart" type="button">НАЧАТЬ ЗАНОВО</button>
         </div>
       </div>
       <div class="briefing-overlay" id="briefing-overlay" role="dialog" aria-modal="true" aria-labelledby="briefing-title" hidden>
         <div class="briefing-content">
           <span class="briefing-kicker" id="briefing-kicker"></span>
+          <div class="briefing-visual inspection" id="briefing-visual" aria-hidden="true">
+            <img src="/logo.png" alt="" />
+            <strong>ШКОЛА БПЛА</strong>
+          </div>
           <h1 id="briefing-title"></h1>
           <p id="briefing-lead"></p>
           <p id="briefing-context"></p>
           <div class="briefing-task" id="briefing-task"></div>
+          <div class="briefing-coupon"><span id="briefing-coupon">Купоны за прохождение: до 10 000 ₽ скидки на обучение.</span> <a href="https://vk.com/aerogenii_kirov" target="_blank" rel="noreferrer" data-analytics-contact>Подписаться в VK</a></div>
+          <section class="school-contact" aria-label="Контакты школы Аэрогении">
+            <div class="school-contact-heading"><img src="/logo.png" alt="" /><div><strong>Школа «Аэрогении»</strong><span>Очное и онлайн-обучение</span></div></div>
+            <a href="tel:+78332250309" data-analytics-contact>+7 (8332) 25-03-09</a>
+            <a class="school-address" href="https://yandex.ru/maps/?text=%D0%9A%D0%B8%D1%80%D0%BE%D0%B2%2C%20%D1%83%D0%BB.%20%D0%A8%D0%B8%D1%80%D0%BE%D1%82%D0%BD%D0%B0%D1%8F%2C%20%D0%B4.%202" target="_blank" rel="noreferrer" data-analytics-contact>Киров, ул. Широтная, д. 2 <span>На карте ↗</span></a>
+          </section>
           <button id="briefing-start" type="button">НАЧАТЬ ПОЛЁТ</button>
         </div>
       </div>
     </main>
+    <script src="/analytics-config.js"></script>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
