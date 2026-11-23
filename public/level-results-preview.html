@@ -65,21 +65,10 @@
       </div>
       <a class="back" href="./result-preview.html">Посмотреть финальный экран после всех уровней →</a>
     </main>
+    <script src="certificate-download.js"></script>
     <script>
       document.querySelectorAll('.download').forEach(button => button.addEventListener('click', () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = 1200; canvas.height = 850;
-        const c = canvas.getContext('2d');
-        c.fillStyle = '#f2f6fc'; c.fillRect(0, 0, 1200, 850);
-        c.fillStyle = '#fff'; c.fillRect(32, 32, 1136, 786);
-        c.strokeStyle = '#1f5bff'; c.lineWidth = 4; c.strokeRect(48, 48, 1104, 754);
-        c.fillStyle = '#1f5bff'; c.textAlign = 'center';
-        c.font = '700 24px Arial'; c.fillText('АЭРОГЕНИИ / ШКОЛА БПЛА', 600, 125);
-        c.fillStyle = '#303747'; c.font = '600 62px Georgia'; c.fillText('СЕРТИФИКАТ', 600, 240);
-        c.font = '700 30px Arial'; c.fillText(`УРОВЕНЬ 0${button.dataset.level}`, 600, 350);
-        c.fillStyle = '#1f5bff'; c.font = '700 76px Arial'; c.fillText(`${Number(button.dataset.amount).toLocaleString('ru-RU')} ₽`, 600, 490);
-        c.fillStyle = '#303747'; c.font = '24px Arial'; c.fillText(`Накопленная скидка: ${Number(button.dataset.total).toLocaleString('ru-RU')} ₽ из 10 000 ₽`, 600, 620);
-        canvas.toBlob(blob => { const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `aerogenii-sertifikat-uroven-${button.dataset.level}.png`; link.click(); });
+        window.downloadPreviewCertificate({ level: Number(button.dataset.level), amount: Number(button.dataset.amount), total: Number(button.dataset.total) });
       }));
     </script>
   </body>

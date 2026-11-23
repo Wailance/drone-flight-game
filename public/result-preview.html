@@ -53,22 +53,10 @@
       </div>
       <a class="button" href="./">ВЕРНУТЬСЯ В СИМУЛЯТОР</a>
     </main>
+    <script src="certificate-download.js"></script>
     <script>
-      document.querySelector('.download').addEventListener('click', event => {
-        const button = event.currentTarget;
-        const canvas = document.createElement('canvas');
-        canvas.width = 1200; canvas.height = 850;
-        const c = canvas.getContext('2d');
-        c.fillStyle = '#f2f6fc'; c.fillRect(0, 0, 1200, 850);
-        c.fillStyle = '#fff'; c.fillRect(32, 32, 1136, 786);
-        c.strokeStyle = '#1f5bff'; c.lineWidth = 4; c.strokeRect(48, 48, 1104, 754);
-        c.fillStyle = '#1f5bff'; c.textAlign = 'center';
-        c.font = '700 24px Arial'; c.fillText('АЭРОГЕНИИ / ШКОЛА БПЛА', 600, 125);
-        c.fillStyle = '#303747'; c.font = '600 62px Georgia'; c.fillText('СЕРТИФИКАТ', 600, 240);
-        c.font = '700 30px Arial'; c.fillText('ВСЕ МИССИИ ЗАВЕРШЕНЫ', 600, 350);
-        c.fillStyle = '#1f5bff'; c.font = '700 76px Arial'; c.fillText('5 000 ₽', 600, 490);
-        c.fillStyle = '#303747'; c.font = '24px Arial'; c.fillText('Накопленная скидка: 10 000 ₽ из 10 000 ₽', 600, 620);
-        canvas.toBlob(blob => { const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'aerogenii-sertifikat-final.png'; link.click(); });
+      document.querySelector('.download').addEventListener('click', () => {
+        window.downloadPreviewCertificate({ level: 3, amount: 5000, total: 10000, final: true });
       });
     </script>
   </body>
