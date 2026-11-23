@@ -901,6 +901,7 @@ function downloadCertificate(certificate) {
   const context = canvas.getContext('2d');
   if (!context) return;
   const levelNames = {
+    0: 'НАКОПЛЕННЫЕ КУПОНЫ',
     1: 'ОБСЛЕДОВАНИЕ ОБЪЕКТА',
     2: 'РАБОТА С АГРОДРОНОМ',
     3: 'FPV-СЪЁМКА',
@@ -963,13 +964,32 @@ function showResult(isCrash) {
   overlay.classList.toggle('crashed', isCrash);
   document.querySelector('#final-invite').hidden = isCrash || mission !== 3;
   const certificatePanel = document.querySelector('#certificate-panel');
-  activeCertificate = isCrash ? null : awardCertificate(mission);
+  const certificates = readCertificates();
+  const accumulated = certificates.reduce((sum, item) => sum + CERTIFICATE_AWARDS[item.level], 0);
+  activeCertificate = isCrash
+    ? accumulated > 0
+      ? {
+          level: 0,
+          amount: accumulated,
+          total: accumulated,
+          awardedAt: certificates.at(-1)?.awardedAt || new Date().toISOString(),
+          id: 'AERO-TOTAL',
+        }
+      : null
+    : awardCertificate(mission);
   certificatePanel.hidden = !activeCertificate;
   if (activeCertificate) {
     const formatRubles = value => `${new Intl.NumberFormat('ru-RU').format(value)} ₽`;
+    document.querySelector('#certificate-label').textContent =
+      isCrash ? 'НАКОПЛЕННЫЕ КУПОНЫ' : 'СЕРТИФИКАТ НА ОБУЧЕНИЕ';
     document.querySelector('#certificate-amount').textContent = formatRubles(activeCertificate.amount);
     document.querySelector('#certificate-total').textContent =
       `Накопленная скидка: ${formatRubles(activeCertificate.total)} из 10 000 ₽`;
+    document.querySelector('#download-certificate').textContent =
+      isCrash ? 'СКАЧАТЬ КУПОН' : 'СКАЧАТЬ СЕРТИФИКАТ';
+  } else {
+    document.querySelector('#certificate-label').textContent = 'СЕРТИФИКАТ НА ОБУЧЕНИЕ';
+    document.querySelector('#download-certificate').textContent = 'СКАЧАТЬ СЕРТИФИКАТ';
   }
   document.querySelector('#result-kicker').textContent = isCrash ? 'ВЫЛЕТ ПРЕРВАН' : mission === 3 ? 'ВСЕ МИССИИ ЗАВЕРШЕНЫ' : `ЭТАП 0${mission} ЗАВЕРШЁН`;
   document.querySelector('#result-title').textContent = isCrash ? 'Дрон разбился' : mission === 1 ? 'Корпус обследован' : mission === 2 ? 'Поле полито' : 'Гонка снята';

@@ -11,7 +11,7 @@
   background: var(--brand-navy);
 }
 .vignette { background: linear-gradient(180deg, rgba(21,40,60,.27), transparent 24%, transparent 73%, rgba(21,40,60,.31)); }
-.topbar { background: rgba(35,61,87,.97); border-bottom: 1px solid rgba(255,255,255,.16); }
+.topbar { background: linear-gradient(105deg, rgba(25,48,76,.98), rgba(35,61,87,.96) 58%, rgba(31,91,255,.84)); border-bottom: 1px solid rgba(255,255,255,.2); }
 .brand img { display: block; width: 80px; height: 66px; object-fit: contain; flex: none; }
 .brand strong { font-size: 21px; color: #fff; }
 .brand small { color: var(--brand-soft); }
@@ -19,9 +19,9 @@
 .live-dot { background: #b9caff; box-shadow: 0 0 8px rgba(169,196,255,.7); }
 .icon-button { color: #fff; background: transparent; border-color: rgba(255,255,255,.42); border-radius: 3px; }
 .icon-button:hover { background: var(--brand-blue); border-color: var(--brand-blue); }
-.flight-status { color: #fff; background: var(--brand-blue); border-color: var(--brand-blue); backdrop-filter: none; }
+.flight-status { color: #fff; background: linear-gradient(100deg, #1648d4, #2e75ff); border-color: #7da6ff; backdrop-filter: none; box-shadow: 0 8px 22px rgba(31,91,255,.22); }
 .flight-status .live-dot { background: #fff; box-shadow: none; }
-.telemetry, .map-panel { color: var(--brand-ink); background: rgba(255,255,255,.96); border: 1px solid var(--brand-line); backdrop-filter: blur(10px); }
+.telemetry, .map-panel { color: var(--brand-ink); background: linear-gradient(145deg, rgba(255,255,255,.98), rgba(236,244,255,.95)); border: 1px solid #c8d7f1; backdrop-filter: blur(10px); box-shadow: 0 14px 30px rgba(25,54,92,.13); }
 .telemetry-item { border-color: var(--brand-line); }
 .telemetry-item>span { color: var(--brand-muted); }
 .telemetry-item strong { color: var(--brand-navy); font: 500 25px 'Oswald', 'Manrope', sans-serif; }
@@ -36,7 +36,7 @@
 #minimap { background: #d9e4ea; }
 .map-caption { color: var(--brand-blue); }
 .map-pin { background: var(--brand-blue); }
-.help-panel { background: rgba(28,51,75,.94); border-color: rgba(255,255,255,.23); }
+.help-panel { background: linear-gradient(145deg, rgba(28,51,75,.97), rgba(22,65,116,.94)); border-color: rgba(151,190,255,.4); box-shadow: 0 14px 30px rgba(9,28,55,.25); }
 .help-title { color: var(--brand-soft); }
 .help-title button { color: #fff; }
 .help-row { color: rgba(255,255,255,.72); }
